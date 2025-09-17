@@ -1,0 +1,160 @@
+{
+    "data": [
+        {
+            "timestamp": "01/04/2023 00:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 11.767731,
+            "pressure_hPa": 1008.3731,
+            "humidity_%": 62.80595,
+            "wind_speed_mps": 1.7935814,
+            "wind_dir_deg": 7.0874023,
+            "solar_radiation_Wm2": 0.0,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 01:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 11.148346,
+            "pressure_hPa": 1007.97,
+            "humidity_%": 66.62257,
+            "wind_speed_mps": 1.3462069,
+            "wind_dir_deg": 9.313477,
+            "solar_radiation_Wm2": 0.0,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 02:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 10.580963,
+            "pressure_hPa": 1007.91437,
+            "humidity_%": 69.03083,
+            "wind_speed_mps": 0.77214086,
+            "wind_dir_deg": 17.310608,
+            "solar_radiation_Wm2": 0.0,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 03:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 11.371246,
+            "pressure_hPa": 1007.8325,
+            "humidity_%": 67.84203,
+            "wind_speed_mps": 0.3462574,
+            "wind_dir_deg": 6.7291565,
+            "solar_radiation_Wm2": 0.0,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 04:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 12.228424,
+            "pressure_hPa": 1008.33685,
+            "humidity_%": 66.658676,
+            "wind_speed_mps": 0.24191254,
+            "wind_dir_deg": 280.56927,
+            "solar_radiation_Wm2": 1.2444445,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 05:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 12.984772,
+            "pressure_hPa": 1008.8281,
+            "humidity_%": 62.12902,
+            "wind_speed_mps": 0.26862812,
+            "wind_dir_deg": 276.46094,
+            "solar_radiation_Wm2": 97.13778,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 06:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 14.275543,
+            "pressure_hPa": 1009.4938,
+            "humidity_%": 57.262558,
+            "wind_speed_mps": 0.35402513,
+            "wind_dir_deg": 31.73288,
+            "solar_radiation_Wm2": 311.44888,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 07:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 14.864899,
+            "pressure_hPa": 1009.7519,
+            "humidity_%": 55.531914,
+            "wind_speed_mps": 1.322904,
+            "wind_dir_deg": 48.748108,
+            "solar_radiation_Wm2": 538.29333,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 08:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 17.408356,
+            "pressure_hPa": 1009.47375,
+            "humidity_%": 45.19745,
+            "wind_speed_mps": 1.419281,
+            "wind_dir_deg": 53.138123,
+            "solar_radiation_Wm2": 732.7111,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 09:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 18.895172,
+            "pressure_hPa": 1008.8137,
+            "humidity_%": 42.43998,
+            "wind_speed_mps": 1.3451335,
+            "wind_dir_deg": 39.81299,
+            "solar_radiation_Wm2": 873.9733,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 10:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 21.200104,
+            "pressure_hPa": 1008.1819,
+            "humidity_%": 32.407272,
+            "wind_speed_mps": 1.5127444,
+            "wind_dir_deg": 14.382751,
+            "solar_radiation_Wm2": 948.5511,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 11:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 21.906647,
+            "pressure_hPa": 1007.4394,
+            "humidity_%": 29.976822,
+            "wind_speed_mps": 1.8931308,
+            "wind_dir_deg": 359.74554,
+            "solar_radiation_Wm2": 949.5111,
+            "rain_mm_h": 0
+        },
+        {
+            "timestamp": "01/04/2023 12:00",
+            "latitude": 30,
+            "longitude": 31,
+            "temperature_C": 22.46817,
+            "pressure_hPa": 1006.52814,
+            "humidity_%": 29.982584,
+            "wind_speed_mps": 2.432301,
+            "wind_dir_deg": 352.2546,
+            "solar_radiation_Wm2": 876.74664,
+            "rain_mm_h": 0
+        }
+    ]
+}
