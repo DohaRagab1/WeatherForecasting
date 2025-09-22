@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload JSON File</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h2>Upload JSON File for Weather Data</h2>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".json">
+    <button type="submit">Predict</button>
+  </form>
+  <p><a href="{{ url_for('home') }}">Back</a></p>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Weather Forecasting API
 ## Introduction
-This is API done using FLask to hourly forecast weather. We support the API with the previous 20 hourly data to predict the upcoming 10 hours. We can upload the data whether through json request or via csv file. And it accepts the timestamps in different formats.
+This is API done using FLask to hourly forecast weather. We support the API with the previous 20 hourly data to predict the upcoming 10 hours. You can upload the data whether through json file or csv file. And it accepts the timestamps in different formats.
 
 ## Weather Features
 It works with these 7 features with the corresponding units: 
@@ -14,24 +14,34 @@ It works with these 7 features with the corresponding units:
 | Solar Radiation      |   W/m²  |
 | Rain                 |   mm/h  |
 
+## Usage
+The home page guide you to upload your data through two ways. It has two buttons: one for CSV files and the other for JSON files. It is shown as this
+![Home](Images\home.png)
+
+When you select any button, it guide you to a different URL, asking you to browse and upload you data file. Each URL accepts only files as you selected before whether CSV or JSON files.
+
+If there's any error with the file or no enough data, it gives an error message and asks for another file.
+Here's an example when an error happens.
+![ErrMsg](Images\ErrMsg.png)
+
+When you upload the file correctly and press the predict button, it directs you for the forecast, shown as table with the 7 features for the upcoming 10 hours.
+This image shows an example of the forecast.
+![Prediction](Images\Prediction.png)
 
 ## Endpoints
 
-### 1. / (main route)
+### 1. / (Home route)
 - *Method*: GET
-- *Description*: prints general information about the service and the available routes with some information about each one.
+- *Description*: guide you to upload your data through the suitable way. You select to upload data via CSV file or JSON file.
 
-### 2. /health
-- *Method*: GET
-- *Description*: checks the health of the service to validate the server status
+### 2. /uploadCSV
+- *Method*: GET & POST
+- *Description*: when you select *csv* button from the home page, it guides you to this URL. Accepting only csv files, you browse and upload your data file, then press the button predict to get the model predictions. It first checks the file and then displays the forecast.
 
-### 3. /predict
-- *Method*: POST
-- *Description*: we send the data as **json** request. This request must contain the required 7 features and the timestamp. It can be only these 8 columns or more.
+### 2. /uploadJOSN
+- *Method*: GET & POST
+- *Description*: when you select *JSON* button from the home page, it guides you to this URL. Accepting only json files, you browse and upload your data file, then press the button predict to get the model predictions. It first checks the file and then displays the forecast.
 
-### 4. /predict_file
-- *Method*: POST
-- *Description*: we send the data as **CSV** file. The file must contain the required features. It handles the null values and empty rows in the csv file.
 
 
 ## Usage
@@ -47,13 +57,42 @@ pip install -r requirements.txt
 ```
 
 ### 3. Initialize the Flask server
-Run `app.py` to initialize the server and open the current URL (in the terminal, Flask server). You can see the main route, and navigate to the health route to check the server.
+Run `app.py` to initialize the server and open the current URL (in the terminal, Flask server). You can see the main route, and select the suitable way to upload your data files.
 
-### 4. Test with json request
-You can test with examples of json requests in `Test folder` or your own requests. Run `testjson.py` but change the path of the json file. You will get the predictions from the model for the upcoming 10 hours.
+### 4. Test with CSV files
+You can test with examples of csv files in `Test folder` or your own file. After pressing the CSV button, browse to the csv file and press predict button to get the model predictions.
 
-### 5. Test with CSV files
-You can test with examples of csv files in `Test folder` or your own file. Run `testcsv.py` but change the path of the csv file. You will get the predictions from the model for the upcoming 10 hours.
+### 5. Test with JSON files
+You can test with examples of json files in `Test folder` or your own file. After pressing the json button, browse to the json file and press predict button to get the model predictions.
 
-### 6. Convert from CSV to json file (*Optional*)
-If you have CSV file, you can convert it to json file directly using `convert.py` but consider changing the paths of the files.
+
+
+## Code Overview
+
+### App.py
+This is the main python file that deploys the model. It creates the Flask app and defines the different routes. It loads the model and get the predictions from it. It also preprocesses and postprocesses the data before and after sending to the model.
+
+### Templates Folder
+It contains different html files to make a friendly user interface for each stage.
+
+#### Index.html
+This is the main page that asks the user to select the suitable way to upload data. Based on the pressed button, it directs the user to different URL.
+
+#### UploadCSV.html
+It has two buttons: one to browse files to upload csv file and the other to get the model predictions. It displays the model predictions or if there's any error with the file.
+It has a hyperlink to get back to the home page.
+
+#### UploadJSON.html
+It has two buttons: one to browse files to upload json file and the other to get the model predictions. It displays the model predictions or if there's any error with the file.
+It has a hyperlink to get back to the home page.
+
+#### Result.html
+It gets the model predictions and displays them in a well-formatted table.
+It has a hyperlink to get back to the home page.
+
+
+### Statics Folder
+It contains style.css file for the style and overall design of the project.
+
+### Test Folder
+It contains several csv and json files to test our model. You can test with your own files or upload directly from this folder.

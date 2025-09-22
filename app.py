@@ -3,12 +3,13 @@ warnings.filterwarnings("ignore")
 import os
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import numpy as np
 import pandas as pd
 import joblib
 import tensorflow as tf
 from datetime import datetime
+import json
 
 # some definitions
 WINDOW_SIZE = 20
@@ -61,7 +62,6 @@ print("Loading model and scalers...")
 if os.path.exists(MODEL_PATH):
     try:
         model = tf.keras.models.load_model(MODEL_PATH, compile=False)
-        print("Loaded full model from", MODEL_PATH)
     except Exception as e:
         raise RuntimeError("Failed to load model file. Error:" + str(e))
 else:
@@ -71,7 +71,7 @@ if not os.path.exists(SCALER_X_PATH) or not os.path.exists(SCALER_Y_PATH):
 
 scaler_x = joblib.load(SCALER_X_PATH)
 scaler_y = joblib.load(SCALER_Y_PATH)
-print("Scalers loaded.")
+print("Loaded.")
 
 
 def get_time_based_features(dt):
@@ -127,15 +127,16 @@ def preprocess_json(data):
         raise ValueError(f"Need at least {WINDOW_SIZE} rows of data")
     rows = []
     for record in data[-WINDOW_SIZE:]:
-        weather_feats = {
-            "temperature_C": record["temperature_C"],
-            "pressure_hPa": record["pressure_hPa"],
-            "humidity_%": record["humidity_%"],
-            "wind_speed_mps": record["wind_speed_mps"],
-            "wind_dir_deg": record["wind_dir_deg"],
-            "solar_radiation_Wm2": record["solar_radiation_Wm2"],
-            "rain_mm_h": record["rain_mm_h"]
-        }
+        # weather_feats = {
+        #     "temperature_C": record["temperature_C"],
+        #     "pressure_hPa": record["pressure_hPa"],
+        #     "humidity_%": record["humidity_%"],
+        #     "wind_speed_mps": record["wind_speed_mps"],
+        #     "wind_dir_deg": record["wind_dir_deg"],
+        #     "solar_radiation_Wm2": record["solar_radiation_Wm2"],
+        #     "rain_mm_h": record["rain_mm_h"]
+        # }
+        weather_feats = {i: record[i] for i in weather_cols}
         ts = record["timestamp"]
         rows.append(build_input_features(ts, weather_feats))
 
@@ -159,7 +160,7 @@ def preprocess_csv(df):
     df_tail = df.tail(WINDOW_SIZE).copy()
     rows = []
     for _, row in df_tail.iterrows():
-        weather_feats = {i : row[i] for i in weather_cols[:]}
+        weather_feats = {i : row[i] for i in weather_cols}
         ts = row["timestamp"]
         rows.append(build_input_features(ts, weather_feats))
 
@@ -176,80 +177,77 @@ def postprocess_pred(prediction):
     return inv.reshape(FORECAST_STEPS, N_TARGETS).tolist()
 
 
-#-------------------API route-------------------#
+def make_forecast(prediction):
+    forecast_vals = []
+    for hour_idx, row in enumerate(prediction, 1):
+        hour_data = {}
+        for col_idx, value in enumerate(row):
+            feat = weather_cols[col_idx]
+            # unit = feature_units[feat]
+            # hour_data[feat] = f"{value:.2f} {unit}"
+            hour_data[feat] = f"{value:.2f}"
+        forecast_vals.append({"hour": hour_idx, "values": hour_data})
+    return forecast_vals
+
+
+#-------------------API routes-------------------#
 # main route, simple definitions & routes
 @app.route("/", methods=["GET"])
-def index():
-    return jsonify({
-        "service": "Hourly Weather Forecast API",
-        "routes": {
-            "/health (GET)": "health check",
-            "/predict (POST JSON)": "Send raw data with timestamp + 7 features",
-            "/predict_file (POST CSV file)": "Upload CSV with timestamp + 7 features"
-        },
-        "required_columns": weather_cols,
-        "note": f"Must send the last {WINDOW_SIZE} hours of data."
-    })
-
-
-# health check route
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok"})
-
-
-# route to predict with json request
-@app.route("/predict", methods=["POST"])
-def predict():
-    try:
-        payload = request.get_json(force=True)
-        data = payload.get("data")
-        x_scaled = preprocess_json(data)
-        pred_s = model.predict(x_scaled)
-        pred_orig = postprocess_pred(pred_s)
-
-        forecast_vals = []
-        for hour_idx, row in enumerate(pred_orig, 1):
-            hour_data = {}
-            for col_idx, value in enumerate(row):
-                feat = weather_cols[col_idx]
-                unit = feature_units[feat]
-                hour_data[feat] = f"{value:.3f} {unit}"
-            forecast_vals.append({"hour": hour_idx, "values": hour_data})
-
-        return jsonify({"forecast": forecast_vals})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+def home():
+    return render_template("index.html")
 
 
 # route to predict with csv files
-@app.route("/predict_file", methods=["POST"])
-def predict_file():
-    try:
+@app.route("/uploadCSV", methods=["GET", "POST"])
+def upload_csv():
+    if request.method == "POST":
         if "file" not in request.files:
-            raise ValueError("No file uploaded.")
+            return render_template("uploadCSV.html", error="No file uploaded")
+
         f = request.files["file"]
-        df = pd.read_csv(f)
-        # if timestamp is the index
-        if "timestamp" not in df.columns:
-            df = df.reset_index().rename(columns={"index": "timestamp"})
-        x_scaled = preprocess_csv(df)
-        pred_s = model.predict(x_scaled)
-        pred_orig = postprocess_pred(pred_s)
+        if f.filename == "":
+            return render_template("uploadCSV.html", error="Empty file name")
+        try:
+            df = pd.read_csv(f)
+            # if timestamp is the index
+            if "timestamp" not in df.columns:
+                df = df.reset_index().rename(columns={"index": "timestamp"})
 
-        forecast_vals = []
-        for hour_idx, row in enumerate(pred_orig, 1):
-            hour_data = {}
-            for col_idx, value in enumerate(row):
-                feat = weather_cols[col_idx]
-                unit = feature_units[feat]
-                hour_data[feat] = f"{value:.3f} {unit}"
-            forecast_vals.append({"hour": hour_idx, "values": hour_data})
+            x_scaled = preprocess_csv(df)
+            pred_s = model.predict(x_scaled)
+            forecast = make_forecast(postprocess_pred(pred_s))
 
-        return jsonify({"forecast": forecast_vals})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+            # return render_template("result.html", forecast=forecast)
+            return render_template("result.html", forecast=forecast, weather_cols=weather_cols,
+                                   feature_units=feature_units, forecast_steps=FORECAST_STEPS)
+            # return forecast
+        except Exception as e:
+            return render_template("uploadCSV.html", error=str(e))
+    return render_template("uploadCSV.html")
 
+
+# route to predict with json files
+@app.route("/uploadJSON", methods=["GET", "POST"])
+def upload_json():
+    if request.method == "POST":
+        if "file" not in request.files:
+            return render_template("uploadJSON.html", error="No file uploaded")
+        f = request.files["file"]
+        if f.filename == "":
+            return render_template("uploadJSON.html", error="Empty file name")
+        try:
+            # payload = pd.read_json(f, typ="series").to_dict()
+            payload = json.load(f)
+            data = payload.get("data")
+            x_scaled = preprocess_json(data)
+            pred_s = model.predict(x_scaled)
+            forecast = make_forecast(postprocess_pred(pred_s))
+            # return render_template("result.html", forecast=forecast)
+            return render_template("result.html", forecast=forecast, weather_cols=weather_cols,
+                                   feature_units=feature_units, forecast_steps=FORECAST_STEPS)
+        except Exception as e:
+            return render_template("uploadJSON.html", error=str(e))
+    return render_template("uploadJSON.html")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

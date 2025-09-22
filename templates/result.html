@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Forecast Results</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Weather Forecasting Results</h1>
+    <p>Predictions for the next {{ forecast_steps }} hours based on your input data.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Hour</th>
+                {% for col in weather_cols %}
+                <th>{{ col }} ({{ feature_units[col] }})</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in forecast %}
+                <tr>
+                    <td>{{ row.hour }}</td>
+                    {% for col in weather_cols %}
+                        <td>{{ row['values'][col] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table><br>
+    <a href="/">Back</a>
+</body>
+
+</html>
