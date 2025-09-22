@@ -16,17 +16,17 @@ It works with these 7 features with the corresponding units:
 
 ## Usage
 The home page guide you to upload your data through two ways. It has two buttons: one for CSV files and the other for JSON files. It is shown as this
-![Home](Images\home.png)
+![Home](Images/home.png)
 
 When you select any button, it guide you to a different URL, asking you to browse and upload you data file. Each URL accepts only files as you selected before whether CSV or JSON files.
 
 If there's any error with the file or no enough data, it gives an error message and asks for another file.
 Here's an example when an error happens.
-![ErrMsg](Images\ErrMsg.png)
+![ErrMsg](Images/ErrMsg.png)
 
 When you upload the file correctly and press the predict button, it directs you for the forecast, shown as table with the 7 features for the upcoming 10 hours.
 This image shows an example of the forecast.
-![Prediction](Images\Prediction.png)
+![Prediction](Images/Prediction.png)
 
 ## Endpoints
 
