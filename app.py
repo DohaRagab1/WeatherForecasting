@@ -14,7 +14,7 @@ import json
 # some definitions
 WINDOW_SIZE = 20
 FORECAST_STEPS = 10
-N_FEATURES = 12  # total input features
+N_FEATURES = 13  # total input features
 N_TARGETS = 7  # 7 weather features
 MODEL_PATH = os.environ.get("MODEL_PATH", "Weights/model.h5")
 SCALER_X_PATH = os.environ.get("SCALER_X_PATH", "Weights/scaler_x.pkl")
@@ -85,6 +85,29 @@ def get_time_based_features(dt):
     return hour, month, WeekDay, YearDay, quarter
 
 
+def detect_anomalies(weather_feats):
+    new_df = pd.DataFrame([weather_feats])
+    anomaly_flags = []
+
+    for feat in weather_cols:
+        # Load saved detector
+        detector_path = f'Weights/{feat}_anomaly_detector.pkl'
+        try:
+            detector = joblib.load(detector_path)
+        except Exception as e:
+            raise RuntimeError(f"Failed to load detector for {feat}: {str(e)}")
+
+        # Scale
+        scaled_new = detector['scaler'].transform(new_df[[feat]])
+        # Compute Z-score
+        distances, _ = detector['knn'].kneighbors(scaled_new)
+        avg_distances = distances.mean(axis=1)
+        z_score = (avg_distances - detector['dist_mean']) / detector['dist_std']
+        anomaly_flags.append(1 if z_score > 2 else 0)
+
+    return max(anomaly_flags)
+
+
 def build_input_features(ts, weather_feats):
     # Check if null or empty
     if pd.isna(ts):
@@ -105,9 +128,10 @@ def build_input_features(ts, weather_feats):
                 try:
                     dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
                 except ValueError:
-                    raise ValueError("Unsupported format")
+                    raise ValueError("Unsupported Date format")
 
     hour, month, WeekDay, YearDay, quarter = get_time_based_features(dt)
+    is_anomaly = detect_anomalies(weather_feats)
     row = [
         float(weather_feats["temperature_C"]),
         float(weather_feats["pressure_hPa"]),
@@ -116,7 +140,7 @@ def build_input_features(ts, weather_feats):
         float(weather_feats["wind_dir_deg"]),
         float(weather_feats["solar_radiation_Wm2"]),
         float(weather_feats["rain_mm_h"]),
-        hour, month, WeekDay, YearDay, quarter
+        is_anomaly, hour, month, WeekDay, YearDay, quarter
     ]
     return row
 
