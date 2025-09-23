@@ -24,6 +24,7 @@ When you select any button, it guide you to a different URL, asking you to brows
 If there's any error with the file or no enough data, it gives an error message and asks for another file.
 
 Here's an example when an error happens.
+
 ![ErrMsg](Images/ErrMsg.png)
 
 When you upload the file correctly and press the predict button, it directs you for the forecast, shown as table with the 7 features for the upcoming 10 hours.
@@ -99,3 +100,17 @@ It contains style.css file for the style and overall design of the project.
 
 ### Test Folder
 It contains several csv and json files to test our model. You can test with your own files or upload directly from this folder.
+
+
+
+## Model Evaluation
+We depended on three metrics to evaluate our model: Mean Absolute Error **MAE**, Mean Absolute Percentage Error **MAPE**, and Coefficient of Determination **R2 Score**
+Below are simple examples to understand what each metric indicate:
+
+- MAE of 1.8°C means temperature forecasts are off by about 1.8 degrees on average.
+- MAPE of 8% means humidity forecasts miss by about 8% of the true humidity level. Except it's not suitable if any value is near zero, the denominator becomes very small and the MAPE value gets very big.
+- Coefficient of Determination (R2 Score): It shows how well predictions capture the variability in data, with a value between 0 and 1. R2 of 0.8 means the model explains 80% of the variability in this feature.
+
+This image shows the evaluation of our model, knowing that MAPE value is very big for `wind_dir_deg, solar_radiation_Wm2, rain_mm_h` features as they contain zero values.
+![Evaluation](Images/Eval.png)
+
