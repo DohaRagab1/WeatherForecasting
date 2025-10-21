@@ -1,6 +1,6 @@
 # Weather Forecasting API
 ## Introduction
-This is API done using FLask to hourly forecast weather. We support the API with the previous 20 hourly data to predict the upcoming 10 hours. You can upload the data whether through json file or csv file. And it accepts the timestamps in different formats.
+This project mainly predicts weather for the upcoming 10 hours. We support the API with the previous 20 hourly data to predict the upcoming 10 hours. You can upload the data whether through json file or csv file. And it accepts the timestamps in different formats.
 
 ## Weather Features
 It works with these 7 features with the corresponding units: 
@@ -76,6 +76,13 @@ You can test with examples of json files in `Test folder` or your own file. Afte
 ### App.py
 This is the main python file that deploys the model. It creates the Flask app and defines the different routes. It loads the model and get the predictions from it. It also preprocesses and postprocesses the data before and after sending to the model.
 
+### Collecting Data from ERA5.py
+This script file collects data through CDS API. It then preprocesses the collected data and convert it the 7 required features.
+You just specify your own key and the required data range to download, considering the request size in the free limit.
+
+### Weather Forecasting Data.ipynb
+This notebook is the whole work performed on the data, starting from the analysis and understanding the data to data preprocessing, and finishing with modelling and evaluation.
+
 ### Templates Folder
 It contains different html files to make a friendly user interface for each stage.
 
@@ -112,5 +119,6 @@ Below are simple examples to understand what each metric indicate:
 - Coefficient of Determination (R2 Score): It shows how well predictions capture the variability in data, with a value between 0 and 1. R2 of 0.8 means the model explains 80% of the variability in this feature.
 
 This image shows the evaluation of our model, knowing that MAPE value is very big for `wind_dir_deg, solar_radiation_Wm2, rain_mm_h` features as they contain zero values.
+
 ![Evaluation](Images/Eval.png)
 
